@@ -1,0 +1,5 @@
+dist
+.vscode
+__pycache__
+robotframework_robotmk.egg-info
+build

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot generator="Robot 4.0.1 (Python 3.9.2 on darwin)" generated="20210413 16:44:38.158" rpa="false" schemaversion="2">
+<suite id="s1" name="Test" source="/Users/elabit/Documents/02_Projekte/00_elabit/robotframework-robotmk/test/test.robot">
+<test id="s1-t1" name="Test One">
+<kw name="Add Checkmk Robotmk State" library="robotmk">
+<arg>WARNING</arg>
+<arg>This is a warning text</arg>
+<doc>Adds a state to the "Robotmk" monitoring service in Checkmk. </doc>
+<msg timestamp="20210413 16:44:38.204" level="INFO">{"nagios_state": "WARNING", "msg": "This is a warning text"}</msg>
+<status status="PASS" starttime="20210413 16:44:38.204" endtime="20210413 16:44:38.205"/>
+</kw>
+<status status="PASS" starttime="20210413 16:44:38.203" endtime="20210413 16:44:38.205"/>
+</test>
+<status status="PASS" starttime="20210413 16:44:38.161" endtime="20210413 16:44:38.206"/>
+</suite>
+<statistics>
+<total>
+<stat pass="1" fail="0" skip="0">All Tests</stat>
+</total>
+<tag>
+</tag>
+<suite>
+<stat pass="1" fail="0" skip="0" id="s1" name="Test">Test</stat>
+</suite>
+</statistics>
+<errors>
+</errors>
+</robot>
