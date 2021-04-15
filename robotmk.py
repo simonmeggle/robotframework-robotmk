@@ -13,12 +13,18 @@ class robotmk():
     = Table of contents = 
     
     - `Purpose`
+    - `Installation`
     - `Valid state types`
     - `Importing`
     - `Keywords`
 
     = Purpose =
+    
     The keywords in this library do not have any effect on the Robot Framework XML result; they are only interpreted during the state evaluation on a Checkmk system. 
+    
+    = Installation = 
+
+    ``pip install  robotframework-robotmk``
     
     = Valid state types = 
 
