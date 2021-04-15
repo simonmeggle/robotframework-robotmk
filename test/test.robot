@@ -5,4 +5,5 @@ Library  robotmk
 *** Test Cases ***
 
 Test One
-    Add Checkmk Robotmk State    WARNING    This is a warning text
+    Add Robotmk Message    WARNING    This is a warning text
+    Add Checkmk Test State    CRITICAL    The test should be Critical.

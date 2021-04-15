@@ -1,25 +1,24 @@
 import json
-from enum import Enum
+
 from robot.api.deco import not_keyword
-
-
+import inspect
 class robotmk():
-    """This is a supplementary library for *Robotmk* (https://www.robotmk.org), the Robot Framework integration project for *Checkmk* (https://checkmk.com). 
+    """This is a small supplementary library for *Robotmk*, the Robot Framework integration project for *Checkmk*. 
     
-    = Table of contents = 
+    - Author: Simon Meggle <simon.meggle@elabit.de>
+    - Robotmk: https://www.robotmk.org
+    - Checkmk: https://checkmk.com
 
+    = Table of contents = 
+    
     - `Purpose`
     - `Valid state types`
     - `Importing`
     - `Keywords`
 
     = Purpose =
-    This library contains some keywords which do not have any effect on the test _execution_. 
+    The keywords in this library do not have any effect on the Robot Framework XML result; they are only interpreted during the state evaluation on a Checkmk system. 
     
-    However, it is useful when using Robotmk to integrate Robot tests into Checkmk. 
-    
-    The keywords make it possible to enrich Robot's XML result with some additional information which then can be processed on the Checkmk server. 
-
     = Valid state types = 
 
     The states are given as Nagios states which are: ``OK, WARNING, CRITICAL, UNKNOWN``.
@@ -30,14 +29,19 @@ class robotmk():
 
 
     """
-    ROBOT_LIBRARY_VERSION = "1.0.2"
+    ROBOT_LIBRARY_VERSION = "1.0.2.1"
 
     @not_keyword
     @staticmethod
     def state2str(state, msg):
+        all_stack_frames = inspect.stack()
+        caller_stack_frame = all_stack_frames[1]
+        caller_name = caller_stack_frame[3]
         data = {
-            'nagios_state': state, 
-            'msg': msg
+            caller_name: {
+                'nagios_state': state, 
+                'msg': msg
+            }
         }
         #return json.dumps(data).encode('utf-8') 
         return json.dumps(data)
@@ -47,9 +51,10 @@ class robotmk():
         pass
 
     def add_checkmk_test_state(self, state: str, msg: str):
-        """Adds a(nother) Nagios state to the Robotmk evaluation stack. 
+        """Adds a(nother) state to the Robotmk evaluation stack of the current test.
 
         Use this keyword if you want to change the state of the *current test*, together with a message. 
+        
         This is especially useful if the test result in Checkmk should be ``WARNING`` (this state does not exist in Robot Framework).
         
         Remark: for ``OK`` or ``CRITICAL`` results the same effect can be achieved with the RF keywords ``Fail`` and ``Set Test Message``.
@@ -62,21 +67,21 @@ class robotmk():
         """
         print(self.state2str(state, msg))
 
-    def add_checkmk_robotmk_state(self, state: str, msg: str):
-        """Adds a state to the "Robotmk" monitoring service in Checkmk. 
+    def add_robotmk_message(self, state: str, msg: str):
+        """Routes a message and state to the "Robotmk" monitoring service in Checkmk. 
 
-        The *"Robotmk" service* in Checkmk gets created once on every monitored Robot host and monitors the basic health of the Robotmk setup on this machine. 
+        This keyword allows to generate a message/state about *administrative topics*, *unfilfilled preconditions* etc. (e.g. wrong screen resolution) and route it to the *Robotmk* service in Checkmk. This service gets automatically created once on every monitored Robot host and reports everything the *monitoring admins* should take care for. The E2E check availability will no be affected because it will remain ``OK``. 
+
+        Why should you use this keyword? 
         
-        Without this keyword, you would write routines which turn the test/suite state into ``FAIL`` with a message containing the reason. This is bad because it results in a CRITICAL state on Checkmk and pulls down the measured availability.  
+        Behind an E2E monitoring check there are often two different groups of interest:
+        - The *monitoring admins*: They have to take care about the setup of test machines with Robot Framework, Checkmk, Robotmk, etc. It's their job to ensure that E2E tests have a reliable and stable environment to run.
+        - The *application owners*: Their work gets judged on the availability report of the application's E2E check. It should only show application outages which actually occured. Therefore, they get pissed off if something unjustifiably pulls down the measured application availability. (In many cases they also are responsible to write the .robot tests).
 
-        Instead, use this keyword for administrative topics like wrong screen resolution, expiring passwords etc. 
-        
-
-        This information will be displayed on the "Robotmk" service; the E2E check will stay ``OK``. 
         See `Valid state types` section for information about available state types. 
 
         Example:
-        | Add Checkmk Robotmk State    WARNING    Notification about expiring password detected on FooApp!
-        | Add Checkmk Robotmk State    CRITICAL   The screen resolution is not set properly; E2E suite ${SUITE_NAME} depends on 1024x768. 
+        | Add Robotmk Message    WARNING    The user password for FooApp is expiring soon; make sure to change it to keep the test running.
+        | Add Robotmk Message    CRITICAL   Invalid screen resolution detected! E2E suite ${SUITE_NAME} may run, but is built for 1024x768. 
         """
         print(self.state2str(state, msg))
