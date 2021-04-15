@@ -36,7 +36,7 @@ class robotmk():
 
 
     """
-    ROBOT_LIBRARY_VERSION = "1.0.2.1"
+    ROBOT_LIBRARY_VERSION = "1.0.3.1"
 
     @not_keyword
     @staticmethod
