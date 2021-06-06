@@ -12,7 +12,7 @@ README = open(os.path.join(here, 'README.md')).read()
 
 setup(
 name = "robotframework-robotmk",
-version = "1.0.3.1",
+version = "1.0.4",
 author = "Simon Meggle",
 author_email = "simon.meggle@elabit.de",
 py_modules = ["robotmk"],
